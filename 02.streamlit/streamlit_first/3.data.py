@@ -4,7 +4,7 @@ import numpy as np
 
 st.title('Data Display elements')
 
-st.caption('text 참고 사이트: https://docs.streamlit.io/develop/api-reference/data')
+st.caption('data 참고 사이트: https://docs.streamlit.io/develop/api-reference/data')
 
 # 1. Metric (단일 지표 카드)
 st.header('1. Metric')
