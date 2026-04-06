@@ -1,6 +1,6 @@
 import streamlit as st
 from datetime import datetime
-# import pandas as pd
+import pandas as pd
 
 st.title('Input Widgets')
 st.caption('input 참고사이트: https://docs.streamlit.io/library/api-reference/widgets')
@@ -97,3 +97,11 @@ slider_date = st.slider(
 
 st.write('slider date', slider_date)
 st.write('slider_date[0]', slider_date[0], 'slider_date[1]', slider_date[1],)
+
+# 날짜 구간으로 데이터 조회하기
+st.header('날짜 구간으로 데이터 조회하기')
+
+# CSV 데이터 불러오기
+df = pd.read_csv('data_subway_in_seoul.csv', encoding='cp949')
+st.write('날짜 필드 형식:', df['날짜'].dtypes)
+st.write(df)
