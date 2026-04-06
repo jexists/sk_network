@@ -2,6 +2,15 @@ import streamlit as st
 import random
 
 st.subheader("점심 메뉴 추천기")
+
+food_list_2 = [
+     {'category': '한식', 'name': '김치찌개', 'spicy': True, 'price': '10000'},
+     {'category': '한식', 'name': '비빔밥', 'spicy': True, 'price': '10000'},
+     {'category': '한식', 'name': '제육볶음', 'spicy': True, 'price': '10000'},
+     {'category': '한식', 'name': '불고기', 'spicy': False, 'price': '10000'},
+     {'category': '중식', 'name': '불고기', 'spicy': False, 'price': '10000'},
+]
+
 food_list = {
     '한식':{
         'spicy': ['김치찌개', '비빔밥', '제육볶음'],
@@ -43,7 +52,10 @@ if st.button('추천받기', type='primary', width='stretch'):
         # print(random_n)
         # final = ', '.join(food_list[category]['non-spicy'])
         final = final_list[random_n]
-        st.write(f'오늘의 추천 메뉴는 {final}입니다.')
+        st.subheader(f'오늘의 추천 메뉴는 :red["{final}"]입니다.', text_alignment="center")
+        # text = f'오늘의 추천 메뉴는 "{final}"입니다.'
+        # st.html('')
+        # st.write(f'오늘의 추천 메뉴는 {final}입니다.')
 
 
 # - 앱 제목 만들기

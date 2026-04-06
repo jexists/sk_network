@@ -4,7 +4,7 @@ import streamlit as st
 # 버튼으로 할 경우
 
 if "page" not in st.session_state:
-    st.session_state.page = "오늘의 운세"
+    st.session_state.page = "MBTI"
 
 if st.sidebar.button("오늘의 운세"):
     st.session_state.page = "오늘의 운세"
