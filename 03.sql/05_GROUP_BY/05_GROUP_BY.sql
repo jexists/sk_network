@@ -67,3 +67,18 @@ ORDER BY avg DESC;
 
 
 
+SELECT 
+    department,
+    GROUP_CONCAT(name) AS names,
+    AVG(salary) AS avg
+FROM employee2
+GROUP BY department;
+
+
+SELECT 
+    department,
+	JSON_ARRAYAGG(name) AS employee_json,
+    AVG(salary) AS avg
+FROM employee2
+GROUP BY department;
+
