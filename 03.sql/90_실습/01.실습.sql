@@ -169,6 +169,25 @@ AND 지번주소 LIKE '%제주%'
 
 
 -- 사업장명도 같이 보고 싶은경우
+-- 1. 서브 쿼리 이용
+SELECT 사업장명, 인허가일자
+FROM camping_info
+WHERE 사업장명 LIKE '%해수욕%'
+	AND 도로명주소 LIKE '제주%'
+	AND 인허가일자 = (
+		SELECT max(인허가일자)
+		FROM camping_info
+		WHERE 사업장명 LIKE '%해수욕장%'
+		AND 지번주소 LIKE '%제주%'
+	);
+
+-- 2. orderby
+SELECT 사업장명, 인허가일자
+FROM camping_info
+WHERE 사업장명 LIKE '%해수욕%'
+	AND 도로명주소 LIKE '제주%'
+ORDER BY 인허가일자 DESC
+LIMIT 1;
 
 -- 4. 인천 해수욕장에 위치한 캠핑장 중 영업중인 곳만 출력
 SELECT 사업장명, 인허가일자
