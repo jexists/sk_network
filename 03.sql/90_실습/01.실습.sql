@@ -29,8 +29,12 @@ SELECT
 FROM camping_info
 WHERE 영업상태명 = '영업/정상';
 
+
 SELECT 상세영업상태명, 상세영업상태코드
 FROM camping_info
+GROUP BY 상세영업상태명, 상세영업상태코드
+-- 영업중 = 13
+-- 폐업 = 3
 
 
 -- 3. 양양에 위치한 캠핑장은 몇 개인지 출력
@@ -44,6 +48,14 @@ WHERE 지번주소 like '%양양%';
 
 
 -- 4. 3번 데이터에서 폐업한 캠핑장은 몇 개인지 출력
+
+SELECT count(*) AS cnt
+FROM camping_info
+WHERE 
+		지번주소 like '%양양%' 
+	AND  
+		상세영업상태명 = '폐업';
+
 SELECT count(*) AS cnt
 FROM camping_info
 WHERE instr(지번주소, '양양') > 0 AND 상세영업상태명 = '폐업';
@@ -54,15 +66,33 @@ FROM camping_info
 WHERE instr(지번주소, '태안') > 0;
 
 -- 6. 5번 데이터에서 2020년에 폐업한 캠핑장만 출력
-SELECT 사업장명
+SELECT 사업장명, 지번주소, 폐업일자
 -- 	, 상세영업상태명
 FROM camping_info
 WHERE instr(지번주소, '태안') > 0 AND 상세영업상태명 = '폐업';
 
+SELECT 사업장명, 지번주소, 폐업일자
+-- 	, 상세영업상태명
+FROM camping_info
+WHERE 지번주소 like '%태안%';
+
+
+SELECT 사업장명, 지번주소, 폐업일자
+FROM camping_info
+WHERE 
+		지번주소 like '%태안%' 
+		AND 
+		폐업일자 LIKE "%2020%"
+
+
 -- 7. 제주도와 서울에 위치한 캠핑장은 몇 개인지 출력
 SELECT count(*) AS cnt
 FROM camping_info
-WHERE instr(지번주소, '제주도') > 0 or instr(지번주소, '서울') > 0;
+WHERE instr(지번주소, '제주') > 0 or instr(지번주소, '서울') > 0;
+
+SELECT *
+FROM camping_info
+WHERE 지번주소 LIKE '%제주특별자치도%'
 
 
 
