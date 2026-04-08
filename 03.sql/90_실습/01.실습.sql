@@ -157,6 +157,19 @@ WHERE (
 	AND 도로명주소 LIKE '제주%'
 ORDER BY 인허가일자 desc;
 
+SELECT max(인허가일자)
+FROM camping_info
+WHERE 사업장명 LIKE '%해수욕장%'
+AND 지번주소 LIKE '%제주%'
+
+SELECT max(인허가일자)
+FROM camping_info
+WHERE 사업장명 LIKE '%해수욕장%'
+AND 지번주소 LIKE '%제주%'
+
+
+-- 사업장명도 같이 보고 싶은경우
+
 -- 4. 인천 해수욕장에 위치한 캠핑장 중 영업중인 곳만 출력
 SELECT 사업장명, 인허가일자
 FROM camping_info
@@ -282,7 +295,46 @@ LIMIT 1
 -- 1. 각 지역별 캠핑장 수 출력 (단, 지역은 LOCATION으로 출력)
 
 
+SELECT 
+	 trim(substr(지번주소, 1, instr(지번주소, ' '))) AS location,
+	 count(*) AS cnt
+FROM camping_info
+GROUP BY location
+
+-- SELECT 
+-- 	CASE
+-- 		WHEN 지번주소 LIKE "서울%" THEN '서울'
+-- 		WHEN 지번주소 LIKE "전북%" THEN '전북특별자치도'
+-- 		WHEN 지번주소 LIKE "전라남도%" THEN '전라남도'
+-- 		WHEN 지번주소 LIKE "전라남도%" THEN '전라남도'
+-- 		WHEN 지번주소 LIKE "충청북%" THEN '충청북도'
+-- 		WHEN 지번주소 LIKE "충청남%" THEN '충청남도'
+-- 		WHEN 지번주소 LIKE "경상북%" THEN '경상북도'
+-- 		WHEN 지번주소 LIKE "경상남%" THEN '경상남도'
+-- 		WHEN 지번주소 LIKE "세종%" THEN '세종특별자치도'
+-- 		WHEN 지번주소 LIKE "제주%" THEN '제주도'
+-- 		WHEN 지번주소 LIKE "경기%" THEN '경기도'
+-- 		WHEN 지번주소 LIKE "부산%" THEN '부산'
+-- 		WHEN 지번주소 LIKE "대구%" THEN '대구'
+-- 		WHEN 지번주소 LIKE "인천%" THEN '인천'
+-- 		WHEN 지번주소 LIKE "광주%" THEN '광주'
+-- 		WHEN 지번주소 LIKE "대전%" THEN '대전'
+-- 		WHEN 지번주소 LIKE "울산%" THEN '울산'
+-- 		WHEN 지번주소 LIKE "강원%" THEN '강원도'
+-- 		ELSE 지번주소
+-- 	 END AS location
+-- FROM camping_info
+-- GROUP BY location
+
 -- 2. 1번 데이터를 캠핑장 수가 많은 지역부터 출력
+
+SELECT 
+	 trim(substr(지번주소, 1, instr(지번주소, ' '))) AS location,
+	 count(*) AS cnt
+FROM camping_info
+GROUP BY location
+ORDER BY cnt desc
+
 -- 3. 각 지역별 영업중인 캠핑장 수 출력
 -- 4. 3번 데이터에서 캠핑장 수가 300개 이상인 지역만 출력
 -- 5. 년도별 폐업한 캠핑장 수 출력 (단, 년도는 YEAR로 출력)
