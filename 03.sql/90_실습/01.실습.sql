@@ -319,7 +319,9 @@ LIMIT 1
 
 -- [실습04]
 -- 1. 각 지역별 캠핑장 수 출력 (단, 지역은 LOCATION으로 출력)
-
+SELECT LEFT(지번주소, 2) AS LOCATION, count(*) AS 캠핑장_수
+FROM camping_info
+GROUP BY LOCATION;
 
 SELECT 
 	 trim(substr(지번주소, 1, instr(지번주소, ' '))) AS location,
