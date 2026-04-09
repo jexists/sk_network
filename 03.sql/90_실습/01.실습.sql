@@ -323,9 +323,25 @@ SELECT LEFT(지번주소, 2) AS LOCATION, count(*) AS 캠핑장_수
 FROM camping_info
 GROUP BY LOCATION;
 
+SELECT substr(지번주소, 1, 5) -- 이렇게 자르면 제대로 안짤린 데이들이 생김. 고정적으로 자르는게 아니고 가변적으로 잘라야 함
+FROM camping_info
+
+
 SELECT 
 	 trim(substr(지번주소, 1, instr(지번주소, ' '))) AS location,
 	 count(*) AS cnt
+FROM camping_info
+GROUP BY location;
+
+-- instr(s, ' ') : 문자열 s에서 ' '(공백)이 처음 나타나는 위치
+SELECT instr(지번주소, ' ') -- 스페이스바가 위치한 첫 번째 자리를 리턴
+FROM camping_info;
+
+SELECT substr(지번주소, 1, instr(지번주소, ' ')) -- 내가 원하는 부분만 파싱
+FROM camping_info;
+
+SELECT substr(지번주소, 1, instr(지번주소, ' ')) AS location,
+	count(*)
 FROM camping_info
 GROUP BY location
 
@@ -390,12 +406,31 @@ FROM camping_info
 WHERE 영업상태명 = '폐업'
 GROUP BY DATE_FORMAT(폐업일자, '%Y');
 
+SELECT substr(폐업일자, 1, 4) AS YEAR,
+	count(*) AS cnt
+FROM camping_info
+WHERE 상세영업상태코드 = 3
+GROUP BY YEAR;
+
+
 
 -- 6. 5번 데이터를 년도별로 내림차순하여 출력
 SELECT 
-	 count(*) AS cnt,
-	 DATE_FORMAT(폐업일자, '%Y') AS YEAR
+	 DATE_FORMAT(폐업일자, '%Y') AS YEAR,
+	 count(*) AS cnt
 FROM camping_info
 WHERE 영업상태명 = '폐업'
 GROUP BY DATE_FORMAT(폐업일자, '%Y')
 ORDER BY YEAR DESC;
+
+SELECT substr(폐업일자, 1, 4) AS YEAR,
+	count(*) AS cnt
+FROM camping_info
+GROUP BY YEAR
+ORDER BY YEAR DESC;
+
+-- 컴럼타입 확인
+DESC camping_info
+
+-- 특정 컬럼만 타입 확인
+SHOW COLUMNS FROM camping_info LIKE '폐업일자'
