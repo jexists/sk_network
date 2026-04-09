@@ -256,7 +256,7 @@ SELECT 사업장명, 시설면적
 FROM camping_info
 WHERE instr(지번주소, '경기도') > 0
 ORDER BY 시설면적 DESC
-LIMIT 1, 4;
+LIMIT 1, 4; -- 2개 써주면, 시작위치(1)와 출력하는 데이터 갯수(4)
 
 -- 5. 영업중인 캠핑장 중에서 인허가일자가 가장 오래된 순으로 20개 출력
 SELECT 사업장명, 인허가일자
@@ -264,7 +264,7 @@ FROM camping_info
 WHERE 
 	상세영업상태명 = '영업중'
 ORDER BY 인허가일자
-LIMIT 20
+LIMIT 20;
 	
 -- 6. 2020년 10월 ~2021년 3월 사이에 폐업한 캠핑장의 사업장명과 지번주소 출력
 -- SELECT 영업상태명
@@ -279,6 +279,13 @@ WHERE
 	폐업일자 >= "2020-10-01"
 	AND
 	폐업일자 <= "2021-03-31";
+
+SELECT 사업장명, 지번주소
+FROM camping_info
+WHERE 폐업일자 
+	BETWEEN '2020-10-01'
+	AND '2021-03-31';
+		
 
 -- SELECT 사업장명, 지번주소, 폐업일자
 -- FROM camping_info
@@ -352,9 +359,41 @@ SELECT
 	 count(*) AS cnt
 FROM camping_info
 GROUP BY location
-ORDER BY cnt desc
+ORDER BY cnt DESC;
 
 -- 3. 각 지역별 영업중인 캠핑장 수 출력
+SELECT 
+	 trim(substr(지번주소, 1, instr(지번주소, ' '))) AS location,
+	 count(*) AS cnt
+FROM camping_info
+WHERE 상세영업상태명 = '영업중'
+GROUP BY location
+ORDER BY cnt DESC;
+
 -- 4. 3번 데이터에서 캠핑장 수가 300개 이상인 지역만 출력
+SELECT 
+	 trim(substr(지번주소, 1, instr(지번주소, ' '))) AS location,
+	 count(*) AS cnt
+FROM camping_info
+WHERE 상세영업상태명 = '영업중'
+GROUP BY location
+HAVING cnt >= 300
+ORDER BY cnt DESC;
+
 -- 5. 년도별 폐업한 캠핑장 수 출력 (단, 년도는 YEAR로 출력)
+SELECT 
+	 count(*) AS cnt,
+	 DATE_FORMAT(폐업일자, '%Y') AS YEAR
+FROM camping_info
+WHERE 영업상태명 = '폐업'
+GROUP BY DATE_FORMAT(폐업일자, '%Y');
+
+
 -- 6. 5번 데이터를 년도별로 내림차순하여 출력
+SELECT 
+	 count(*) AS cnt,
+	 DATE_FORMAT(폐업일자, '%Y') AS YEAR
+FROM camping_info
+WHERE 영업상태명 = '폐업'
+GROUP BY DATE_FORMAT(폐업일자, '%Y')
+ORDER BY YEAR DESC;
