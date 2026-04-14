@@ -9,18 +9,18 @@ url = "https://www.melon.com/chart/index.htm" # 멜론 top100주소
 page = requests.get(url, headers=header)
 
 # 3. BeatifulSoup 으로 파싱
-bs_result = BeautifulSoup()
-bs_result
+bs_result = BeautifulSoup(page.text, 'html.parser')
+print(bs_result)
 
 # 결과물을 저장할 리스트 생성
-result_list = [] 
+result_list = []
 
 copy_selector = "       "
 data = bs_result.select(copy_selector+ "> tr")
 print(len(data))
 
 # 리스트로 저장
-result_list = [] 
+result_list = []
 for item in data:
     tmp_list = item.find_all('  ')
     text = tmp_list[5].get_text(separator='_', strip=True)
