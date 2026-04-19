@@ -1,6 +1,13 @@
 # 파이썬 가상환경
 **/.venv
 
+# website 빌드 생성물 (GitHub Actions에서 생성)
+website/dist/
+website/public/content/notebooks/
+website/public/content/pdfs/
+website/public/content/manifest.json
+website/node_modules/
+
 # 파이썬 실행 캐시 파일
 __pycache__/
 *.pyc
