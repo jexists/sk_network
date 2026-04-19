@@ -65,8 +65,15 @@ def safe_filename(rel_path: Path) -> str:
     return str(rel_path).replace("/", "__").replace("\\", "__")
 
 
+def is_up_to_date(src: Path, dest: Path) -> bool:
+    """dest가 존재하고 src보다 최신이면 True"""
+    return dest.exists() and dest.stat().st_mtime >= src.stat().st_mtime
+
+
 def convert_notebook(ipynb_path: Path, output_html: Path) -> bool:
-    """nbconvert로 ipynb → HTML 변환"""
+    """nbconvert로 ipynb → HTML 변환 (이미 최신이면 건너뜀)"""
+    if is_up_to_date(ipynb_path, output_html):
+        return True  # 스킵
     try:
         output_html.parent.mkdir(parents=True, exist_ok=True)
         result = subprocess.run(
@@ -166,18 +173,19 @@ def scan_directory(dir_path: Path, rel_base: Path) -> list[dict]:
                 html_output = NOTEBOOKS_DIR / html_name
                 node["convertedPath"] = f"content/notebooks/{html_name}"
 
-                print(f"  변환 중: {rel_path}")
+                if not is_up_to_date(entry, html_output):
+                    print(f"  변환 중: {rel_path}")
                 success = convert_notebook(entry, html_output)
                 if not success:
                     node["convertedPath"] = None
 
             elif entry.suffix.lower() == ".pdf":
-                # PDF는 public/content/pdfs/ 에 복사
                 pdf_dir = OUTPUT_DIR / "pdfs"
                 pdf_dir.mkdir(parents=True, exist_ok=True)
                 pdf_dest_name = safe_filename(rel_path)
                 pdf_dest = pdf_dir / pdf_dest_name
-                shutil.copy2(entry, pdf_dest)
+                if not is_up_to_date(entry, pdf_dest):
+                    shutil.copy2(entry, pdf_dest)
                 node["type"] = "pdf"
                 node["pdfPath"] = f"content/pdfs/{pdf_dest_name}"
 
@@ -203,17 +211,36 @@ def scan_directory(dir_path: Path, rel_base: Path) -> list[dict]:
 def main():
     print("=== sk_network 학습 파일 빌드 시작 ===\n")
 
-    # 출력 디렉토리 초기화
-    if NOTEBOOKS_DIR.exists():
-        shutil.rmtree(NOTEBOOKS_DIR)
     NOTEBOOKS_DIR.mkdir(parents=True, exist_ok=True)
-
-    pdfs_dir = OUTPUT_DIR / "pdfs"
-    if pdfs_dir.exists():
-        shutil.rmtree(pdfs_dir)
+    (OUTPUT_DIR / "pdfs").mkdir(parents=True, exist_ok=True)
 
     print("파일 스캔 및 변환 중...\n")
     tree = scan_directory(REPO_ROOT, Path(""))
+
+    # 사용된 출력 파일 목록 수집 (고아 파일 정리용)
+    def collect_outputs(nodes: list) -> tuple[set, set]:
+        htmls: set = set()
+        pdfs: set = set()
+        for n in nodes:
+            if n.get("convertedPath"):
+                htmls.add(Path(n["convertedPath"]).name)
+            if n.get("pdfPath"):
+                pdfs.add(Path(n["pdfPath"]).name)
+            if n.get("children"):
+                h, p = collect_outputs(n["children"])
+                htmls |= h
+                pdfs |= p
+        return htmls, pdfs
+
+    used_htmls, used_pdfs = collect_outputs(tree)
+
+    # 더 이상 쓰이지 않는 파일 삭제
+    for f in NOTEBOOKS_DIR.glob("*.html"):
+        if f.name not in used_htmls:
+            f.unlink()
+    for f in (OUTPUT_DIR / "pdfs").glob("*.pdf"):
+        if f.name not in used_pdfs:
+            f.unlink()
 
     manifest = {"tree": tree}
     manifest_path = OUTPUT_DIR / "manifest.json"
